@@ -1,0 +1,13 @@
+<launch>
+  <node name="animation_udp" pkg="animation" type="udp_comm" output="screen">
+  	<!--cassie rtc 192.168.1.128-->
+  	<!--local 127.0.0.1-->
+  	<!--raser 192.168.1.136-->
+  	<!--nuc i5 192.168.1.225-->
+    <param name="rtc_ip"   type="str" value="192.168.1.136"/>
+    <param name="nuc_ip"   type="str" value="192.168.1.225"/>
+    <param name="rtc_port" type="str" value="25000"/>
+    <param name="nuc_port" type="str" value="25001"/>
+  </node>
+  <node name="seq_smach" pkg="animation" type="seq_smach.py" output="screen"/>
+</launch>
