@@ -92,13 +92,7 @@ void udpReceive()
 
     // Unpack received data into cassie output struct
     unpack_cassie_sm_out_t(data_in, &cassie_sm_out);
-
-    smach_fb.data.clear();
-    smach_fb.data.push_back(cassie_sm_out.track_ani);
-    smach_fb.data.push_back(cassie_sm_out.in_ani);
-    smach_fb.data.push_back(cassie_sm_out.ani_finished);
-    smach_rtc_pub.publish(smach_fb);
-
+    
     usleep(5000);
   }
 }
@@ -107,6 +101,15 @@ void timerCallback(const ros::TimerEvent& event)
 {
 	ROS_INFO("[udp] sendbuf: %d, %d, %d, %d, %d, %d",sendbuf[0],sendbuf[1],sendbuf[2],sendbuf[3],sendbuf[4],sendbuf[5]);
 	ROS_INFO("[udp] recvbuf: %d, %d, %d, %d, %d, %d, %d, %d",recvbuf[0],recvbuf[1],recvbuf[2],recvbuf[3],recvbuf[4],recvbuf[5],recvbuf[6],recvbuf[7]);
+}
+
+void pubTimerCallback(const ros::TimerEvent& event)
+{
+	smach_fb.data.clear();
+	smach_fb.data.push_back(cassie_sm_out.track_ani);
+	smach_fb.data.push_back(cassie_sm_out.in_ani);
+	smach_fb.data.push_back(cassie_sm_out.ani_finished);
+	smach_rtc_pub.publish(smach_fb);
 }
 
 void convertParamToSock(ros::NodeHandle *nh, int *sock)
@@ -179,6 +182,7 @@ int main(int argc, char **argv)
   initUdpThread();
   initUdpRevThread();
   ros::Timer timer = nh.createTimer(ros::Duration(1), timerCallback);
+  ros::Timer pub_timer = nh.createTimer(ros::Duration(0.01), pubTimerCallback);
 
   ros::Subscriber sub_vel = nh.subscribe("motion_msg", 10, callbackMotionId);
   smach_rtc_pub = nh.advertise<std_msgs::Int16MultiArray>("rtc_feedback", 10);
