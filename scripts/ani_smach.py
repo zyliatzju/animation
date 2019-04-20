@@ -14,6 +14,7 @@ class Utils():
 		rospy.Subscriber("animation_udp/rtc_feedback", Int16MultiArray, self.rtc_callback, queue_size=1)
 		self.mid_pub = rospy.Publisher("animation_udp/motion_msg", Int32, queue_size=1)
 		self.vid_pub = rospy.Publisher("animation_sm/bluetooth_vmsg", Int32, queue_size=1)
+		rospy.Timer(rospy.Duration(1), self.plotting_callback)
 		self.video_trans = [11001000,11001002]
 		self.rate = 1/300.0
 		self.track_ani = 0
@@ -23,6 +24,9 @@ class Utils():
 		self.trans_time = 3.0
 		self.t_trans_offset = 0
 		self.trans_begun = 0
+		self.pub_motion_msg = 0
+		self.pub_video_msg = 0
+		self.now = rospy.get_time()
 		rospy.loginfo("animation smach is init")
 
 	def rtc_callback(self,msg):
@@ -35,9 +39,10 @@ class Utils():
 			if self.ani_finished is 1 and self.prev_ani_finished is not 1 and self.trans_begun is 0:
 				self.trans_begun = 1
 				self.t_trans_offset = rospy.get_time()
-
-			now = rospy.get_time()
-			if self.trans_begun is 1 and now > (self.t_trans_offset + self.trans_time):
+			self.prev_ani_finished = self.ani_finished
+			
+			self.now = rospy.get_time()
+			if self.trans_begun is 1 and self.now > (self.t_trans_offset + self.trans_time):
 				self.trans_begun = 0
 				return "new_motion"
 			else:
@@ -54,6 +59,9 @@ class Utils():
 		else:
 			return "in_transit"
 
+	def plotting_callback(self, event):
+		rospy.loginfo("[seq smach]: published motion msg is {}, video_msg is {}".format(self.pub_motion_msg, self.pub_video_msg))
+		rospy.loginfo("[seq smach]: trans_begun:{}, waitingflag is:{}".format(self.trans_begun,self.now > (self.t_trans_offset + self.trans_time)))
 
 	# def make_decision_2(self):
 	# 	if self.track_ani is 0:
@@ -67,8 +75,8 @@ class Utils():
 
 	# 		now = rospy.get_time()
 	# 		if self.trans_begun is 1 and now > (self.t_trans_offset + self.trans_time):
-	# 			self.midx = min(self.midx+1, len(self.motion_queue))
-	# 			self.vidx = min(self.vidx+1, len(self.video_queue))
+	# 			self.midx = min(self.midx+1, len(self.motion_queue)-1)
+	# 			self.vidx = min(self.vidx+1, len(self.video_queue)-1)
 	# 			self.trans_begun = 0
 
 	# 		self.motion_msg = self.motion_queue[self.midx]
@@ -95,25 +103,29 @@ class HappyState(smach.State):
 			outcomes=['return_to_InAni'],
 			input_keys=['holding_in'],
 			output_keys=['status_out'])
-		self.motion_queue = [6,13]
+		self.motion_queue = [6,13,1,2,3,4,5,6,7,8,9]
 		self.video_queue = [11001003,11001001]
 
 	def execute(self, userdata):
-		mid = random.randomint(0,len(self.motion_queue))
-		vid = random.randomint(0,len(self.video_queue))
-		trans_id = random.randomint(0,len(utils.video_trans))
+		mid = random.randint(0,len(self.motion_queue)-1)
+		vid = random.randint(0,len(self.video_queue)-1)
+		trans_id = random.randint(0,len(utils.video_trans)-1)
 
 		while not rospy.is_shutdown():
 			curr_state = utils.make_decision_on_motion()
 			if curr_state == "in_motion":
+				utils.pub_motion_msg = self.motion_queue[mid]
 				utils.mid_pub.publish(self.motion_queue[mid])
 				curr_vstate = utils.make_decision_on_emotion()
 				if curr_vstate == "begin_emotion":
+					utils.pub_video_msg = self.video_queue[vid]
 					utils.vid_pub.publish(self.video_queue[vid])
 				else:
+					utils.pub_video_msg = utils.video_trans[trans_id]
 					utils.vid_pub.publish(utils.video_trans[trans_id])
 			elif curr_state == "wait_transit":
 				if userdata.holding_in == 1:
+					utils.pub_motion_msg = self.motion_queue[mid]
 					utils.mid_pub.publish(self.motion_queue[mid])
 				else:
 					userdata.status_out = curr_state
@@ -130,25 +142,29 @@ class SadState(smach.State):
 			outcomes=['return_to_InAni'],
 			input_keys=['holding_in'],
 			output_keys=['status_out'])
-		self.motion_queue = [6,13]
+		self.motion_queue = [6,13,1,2,3,4,5,6,7,8,9]
 		self.video_queue = [11001003,11001001]
 
 	def execute(self, userdata):
-		mid = random.randomint(0,len(self.motion_queue))
-		vid = random.randomint(0,len(self.video_queue))
-		trans_id = random.randomint(0,len(utils.video_trans))
+		mid = random.randint(0,len(self.motion_queue)-1)
+		vid = random.randint(0,len(self.video_queue)-1)
+		trans_id = random.randint(0,len(utils.video_trans)-1)
 
 		while not rospy.is_shutdown():
 			curr_state = utils.make_decision_on_motion()
 			if curr_state == "in_motion":
+				utils.pub_motion_msg = self.motion_queue[mid]
 				utils.mid_pub.publish(self.motion_queue[mid])
 				curr_vstate = utils.make_decision_on_emotion()
 				if curr_vstate == "begin_emotion":
+					utils.pub_video_msg = self.video_queue[vid]
 					utils.vid_pub.publish(self.video_queue[vid])
 				else:
+					utils.pub_video_msg = utils.video_trans[trans_id]
 					utils.vid_pub.publish(utils.video_trans[trans_id])
 			elif curr_state == "wait_transit":
 				if userdata.holding_in == 1:
+					utils.pub_motion_msg = self.motion_queue[mid]
 					utils.mid_pub.publish(self.motion_queue[mid])
 				else:
 					userdata.status_out = curr_state
@@ -165,25 +181,29 @@ class LookaroundState(smach.State):
 			outcomes=['return_to_InAni'],
 			input_keys=['holding_in'],
 			output_keys=['status_out'])
-		self.motion_queue = [6,13]
+		self.motion_queue = [6,13,1,2,3,4,5,6,7,8,9]
 		self.video_queue = [11001003,11001001]
 
 	def execute(self, userdata):
-		mid = random.randomint(0,len(self.motion_queue))
-		vid = random.randomint(0,len(self.video_queue))
-		trans_id = random.randomint(0,len(utils.video_trans))
+		mid = random.randint(0,len(self.motion_queue)-1)
+		vid = random.randint(0,len(self.video_queue)-1)
+		trans_id = random.randint(0,len(utils.video_trans)-1)
 
 		while not rospy.is_shutdown():
 			curr_state = utils.make_decision_on_motion()
 			if curr_state == "in_motion":
+				utils.pub_motion_msg = self.motion_queue[mid]
 				utils.mid_pub.publish(self.motion_queue[mid])
 				curr_vstate = utils.make_decision_on_emotion()
 				if curr_vstate == "begin_emotion":
+					utils.pub_video_msg = self.video_queue[vid]
 					utils.vid_pub.publish(self.video_queue[vid])
 				else:
+					utils.pub_video_msg = utils.video_trans[trans_id]
 					utils.vid_pub.publish(utils.video_trans[trans_id])
 			elif curr_state == "wait_transit":
 				if userdata.holding_in == 1:
+					utils.pub_motion_msg = self.motion_queue[mid]
 					utils.mid_pub.publish(self.motion_queue[mid])
 				else:
 					userdata.status_out = curr_state
@@ -200,25 +220,29 @@ class AngryState(smach.State):
 			outcomes=['return_to_InAni'],
 			input_keys=['holding_in'],
 			output_keys=['status_out'])
-		self.motion_queue = [6,13]
+		self.motion_queue = [6,13,1,2,3,4,5,6,7,8,9]
 		self.video_queue = [11001003,11001001]
 
 	def execute(self, userdata):
-		mid = random.randomint(0,len(self.motion_queue))
-		vid = random.randomint(0,len(self.video_queue))
-		trans_id = random.randomint(0,len(utils.video_trans))
+		mid = random.randint(0,len(self.motion_queue)-1)
+		vid = random.randint(0,len(self.video_queue)-1)
+		trans_id = random.randint(0,len(utils.video_trans)-1)
 
 		while not rospy.is_shutdown():
 			curr_state = utils.make_decision_on_motion()
 			if curr_state == "in_motion":
+				utils.pub_motion_msg = self.motion_queue[mid]
 				utils.mid_pub.publish(self.motion_queue[mid])
 				curr_vstate = utils.make_decision_on_emotion()
 				if curr_vstate == "begin_emotion":
+					utils.pub_video_msg = self.video_queue[vid]
 					utils.vid_pub.publish(self.video_queue[vid])
 				else:
+					utils.pub_video_msg = utils.video_trans[trans_id]
 					utils.vid_pub.publish(utils.video_trans[trans_id])
 			elif curr_state == "wait_transit":
 				if userdata.holding_in == 1:
+					utils.pub_motion_msg = self.motion_queue[mid]
 					utils.mid_pub.publish(self.motion_queue[mid])
 				else:
 					userdata.status_out = curr_state
@@ -235,25 +259,29 @@ class ConcernedState(smach.State):
 			outcomes=['return_to_InAni'],
 			input_keys=['holding_in'],
 			output_keys=['status_out'])
-		self.motion_queue = [6,13]
+		self.motion_queue = [6,13,1,2,3,4,5,6,7,8,9]
 		self.video_queue = [11001003,11001001]
 
 	def execute(self, userdata):
-		mid = random.randomint(0,len(self.motion_queue))
-		vid = random.randomint(0,len(self.video_queue))
-		trans_id = random.randomint(0,len(utils.video_trans))
+		mid = random.randint(0,len(self.motion_queue)-1)
+		vid = random.randint(0,len(self.video_queue)-1)
+		trans_id = random.randint(0,len(utils.video_trans)-1)
 
 		while not rospy.is_shutdown():
 			curr_state = utils.make_decision_on_motion()
 			if curr_state == "in_motion":
+				utils.pub_motion_msg = self.motion_queue[mid]
 				utils.mid_pub.publish(self.motion_queue[mid])
 				curr_vstate = utils.make_decision_on_emotion()
 				if curr_vstate == "begin_emotion":
+					utils.pub_video_msg = self.video_queue[vid]
 					utils.vid_pub.publish(self.video_queue[vid])
 				else:
+					utils.pub_video_msg = utils.video_trans[trans_id]
 					utils.vid_pub.publish(utils.video_trans[trans_id])
 			elif curr_state == "wait_transit":
 				if userdata.holding_in == 1:
+					utils.pub_motion_msg = self.motion_queue[mid]
 					utils.mid_pub.publish(self.motion_queue[mid])
 				else:
 					userdata.status_out = curr_state
@@ -268,19 +296,20 @@ class ConcernedState(smach.State):
 class InAniState(smach.State):
 	def __init__(self):
 		smach.State.__init__(self, 
-			outcomes=['happy','concerned','angry','lookaround','sad'],
+			outcomes=['happy','concerned','angry','lookaround','sad','end'],
 			input_keys=['status_in'],
 			output_keys=['holding_out'])
-		self.ani_seq = ['lookaround','concerned','happy']
+		self.ani_seq = ['lookaround','concerned','happy','lookaround']
 		self.seq_id = 0
 
 	def execute(self, userdata):
+		rospy.loginfo("status is {}".format(userdata.status_in))
 		if userdata.status_in == "wait_transit":
 			userdata.holding_out = 1
 			self.seq_id = 0
 		elif userdata.status_in == "new_motion":
 			userdata.holding_out = 0
-			self.seq_id = min(self.seq_id+1, len(self.ani_seq))
+			self.seq_id = min(self.seq_id+1, len(self.ani_seq)-1)
 		
 		return self.ani_seq[self.seq_id]
 
@@ -289,14 +318,14 @@ class InAniState(smach.State):
 if __name__ == '__main__':
 	global utils
 	utils = Utils()
-	sm = smach.StateMachine()
+	sm = smach.StateMachine(outcomes=['end'])
 	sm.userdata.holding = 1
 	sm.userdata.status = "wait_transit"
 
 	with sm:
 		smach.StateMachine.add('InAniState', InAniState(), 
 			transitions={'happy':'HappyState','concerned':'ConcernedState','angry':'AngryState',
-			'lookaround':'LookaroundState','sad':'SadState'},
+			'lookaround':'LookaroundState','sad':'SadState','end':'end'},
 			remapping={'status_in':'status','holding_out':'holding'})
 		smach.StateMachine.add('HappyState', HappyState(),
 			transitions={'return_to_InAni':'InAniState'},

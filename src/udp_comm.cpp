@@ -182,7 +182,7 @@ int main(int argc, char **argv)
   initUdpThread();
   initUdpRevThread();
   ros::Timer timer = nh.createTimer(ros::Duration(1), timerCallback);
-  ros::Timer pub_timer = nh.createTimer(ros::Duration(0.01), pubTimerCallback);
+  ros::Timer pub_timer = nh.createTimer(ros::Duration(1/300.0), pubTimerCallback);
 
   ros::Subscriber sub_vel = nh.subscribe("motion_msg", 10, callbackMotionId);
   smach_rtc_pub = nh.advertise<std_msgs::Int16MultiArray>("rtc_feedback", 10);
