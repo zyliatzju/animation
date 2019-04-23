@@ -26,8 +26,8 @@ class BlueSender():
 		rospy.sleep(3)
 		while not rospy.is_shutdown():
 			self.sock.send(str(0))
-			rospy.loginfo("msg sent: {}".format(i))
-			data = sock.recv(1024)
+			rospy.loginfo("msg sent: {}".format(0))
+			data = self.sock.recv(1024)
 			rospy.loginfo("data recv: {}".format(data))
 			if data == '0':
 				rospy.loginfo("ready")
@@ -69,7 +69,7 @@ class BlueSender():
 		r = rospy.Rate(1/3.0)
 		rospy.loginfo("connecting to service {}...".format(self.uuid))
 		while not rospy.is_shutdown():
-			service_matches = bluetooth.find_service(uuid = self.uuid,address = self.addr)
+			service_matches = bluetooth.find_service(uuid = self.uuid,address = self.faddr)
 			if len(service_matches) == 0:
 				rospy.loginfo("couldn't find the service = {}, try again".format(uuid))
 			else:

@@ -15,7 +15,7 @@ class Utils():
 		self.mid_pub = rospy.Publisher("animation_udp/motion_msg", Int32, queue_size=1)
 		self.vid_pub = rospy.Publisher("animation_sm/bluetooth_vmsg", Int32, queue_size=1)
 		rospy.Timer(rospy.Duration(1), self.plotting_callback)
-		self.video_trans = [11001000,11001002]
+		self.video_trans = [1003, 1001, 1002, 1004] 
 		self.rate = 1/300.0
 		self.track_ani = 0
 		self.in_ani = 0
@@ -104,7 +104,7 @@ class HappyState(smach.State):
 			input_keys=['holding_in'],
 			output_keys=['status_out'])
 		self.motion_queue = [6,13,1,2,3,4,5,6,7,8,9]
-		self.video_queue = [11001003,11001001]
+		self.video_queue = [1003,1001]
 
 	def execute(self, userdata):
 		mid = random.randint(0,len(self.motion_queue)-1)
@@ -143,7 +143,7 @@ class SadState(smach.State):
 			input_keys=['holding_in'],
 			output_keys=['status_out'])
 		self.motion_queue = [6,13,1,2,3,4,5,6,7,8,9]
-		self.video_queue = [11001003,11001001]
+		self.video_queue = [1003,1001]
 
 	def execute(self, userdata):
 		mid = random.randint(0,len(self.motion_queue)-1)
@@ -182,7 +182,7 @@ class LookaroundState(smach.State):
 			input_keys=['holding_in'],
 			output_keys=['status_out'])
 		self.motion_queue = [6,13,1,2,3,4,5,6,7,8,9]
-		self.video_queue = [11001003,11001001]
+		self.video_queue = [1003,1001]
 
 	def execute(self, userdata):
 		mid = random.randint(0,len(self.motion_queue)-1)
@@ -221,7 +221,7 @@ class AngryState(smach.State):
 			input_keys=['holding_in'],
 			output_keys=['status_out'])
 		self.motion_queue = [6,13,1,2,3,4,5,6,7,8,9]
-		self.video_queue = [11001003,11001001]
+		self.video_queue = [1003,1001]
 
 	def execute(self, userdata):
 		mid = random.randint(0,len(self.motion_queue)-1)
@@ -260,7 +260,7 @@ class ConcernedState(smach.State):
 			input_keys=['holding_in'],
 			output_keys=['status_out'])
 		self.motion_queue = [6,13,1,2,3,4,5,6,7,8,9]
-		self.video_queue = [11001003,11001001]
+		self.video_queue = [1003,1001]
 
 	def execute(self, userdata):
 		mid = random.randint(0,len(self.motion_queue)-1)

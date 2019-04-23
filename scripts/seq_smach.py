@@ -3,6 +3,8 @@
 import rospy
 import bluetooth
 from std_msgs.msg import Int16MultiArray, Int32
+import random
+
 
 class SeqSmach():
 	"""docstring for SeqSmach"""
@@ -13,10 +15,10 @@ class SeqSmach():
 		self.mid_pub = rospy.Publisher("animation_udp/motion_msg", Int32, queue_size=1)
 		self.vid_pub = rospy.Publisher("animation_sm/bluetooth_vmsg", Int32, queue_size=1)
 
-		self.motion_queue = [6,13]
-		# self.motion_queue = [6,13,1,2,3,4,5]
-		self.video_queue = [11001003,11001001]
-		self.trans_video = 11001000 #video for transition 
+		# self.motion_queue = [6,13]
+		self.motion_queue = [6,13,1,2,3,4,5,7,8]
+		self.video_queue = [2001, 2002, 2003, 3001, 4001, 7001, 7002, 7003]
+		self.trans_video = 1003 #video for transition 
 		self.midx = 0
 		self.vidx = 0
 		self.motion_msg = 0
@@ -73,7 +75,7 @@ class SeqSmach():
 
 	def plotting_callback(self, event):
 		rospy.loginfo("[seq smach]: motion id:{}, video id:{}".format(self.motion_msg, self.video_msg))
-		rospy.loginfo("[seq smach]: trans_begun:{}, now:{}, flag is:{}".format(self.trans_begun,self.now,self.now > (self.t_trans_offset + self.trans_time)))
+		rospy.loginfo("[seq smach]: trans_begun:{}, waitingflag is:{}".format(self.trans_begun,self.now > (self.t_trans_offset + self.trans_time)))
 
 if __name__ == '__main__':
 	ss = SeqSmach()
