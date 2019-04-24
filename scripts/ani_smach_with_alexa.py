@@ -363,7 +363,7 @@ class InAniState(smach.State):
 						break
 
 					rospy.loginfo("queue is finished, waiting")
-					rospy.sleep(0.5)
+					rospy.sleep(1)
 			else:
 				self.seq_id = min(self.seq_id, len(queue)-1)
 

@@ -1,5 +1,5 @@
 <launch>
-  <arg name="use_speech" value="false">
+  <arg name="use_speech" value="true"/>
   <param name="use_speech" type="bool" value="$(arg use_speech)" />
 
   <node name="animation_udp" pkg="animation" type="udp_comm" output="screen">
@@ -16,9 +16,8 @@
   </node>
   <!--node name="ani_smach" pkg="animation" type="ani_smach.py" output="screen"/-->
   <node name="ani_smach" pkg="animation" type="ani_smach_with_alexa.py" output="screen"/>
-  <!--<group if="$(arg use_speech)">
+  <group if="$(arg use_speech)">
     <node name="alexa_lisenter" pkg="alexa2ros" type="alexa_lisenter.py" output="screen"/>
   </group>
-  -->
 
 </launch>
