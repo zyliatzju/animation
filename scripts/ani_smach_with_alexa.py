@@ -359,10 +359,10 @@ class InAniState(smach.State):
 					if utils.track_ani == 0:
 						userdata.holding_out = 1
 						self.seq_id = 0
-						rospy.loginfo("not tracking ani, reset")
+						rospy.loginfo("[seq smach]: not tracking ani, reset")
 						break
 
-					rospy.loginfo("queue is finished, waiting")
+					rospy.loginfo("[seq smach]: queue is finished, waiting")
 					rospy.sleep(1)
 			else:
 				self.seq_id = min(self.seq_id, len(queue)-1)
