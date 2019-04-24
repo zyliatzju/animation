@@ -83,7 +83,7 @@ class HappyState(smach.State):
 			outcomes=['return_to_InAni'],
 			input_keys=['holding_in'],
 			output_keys=['status_out'])
-		self.motion_queue = [6,13,1,2,3,4,5,6]
+		self.motion_queue = [6,13]
 		self.video_queue = [1003,1001]
 
 	def execute(self, userdata):
@@ -124,7 +124,7 @@ class SadState(smach.State):
 			outcomes=['return_to_InAni'],
 			input_keys=['holding_in'],
 			output_keys=['status_out'])
-		self.motion_queue = [6,13,1,2,3,4,5,6]
+		self.motion_queue = [6,13]
 		self.video_queue = [1003,1001]
 
 	def execute(self, userdata):
@@ -165,7 +165,7 @@ class LookaroundState(smach.State):
 			outcomes=['return_to_InAni'],
 			input_keys=['holding_in'],
 			output_keys=['status_out'])
-		self.motion_queue = [6,13,1,2,3,4,5,6]
+		self.motion_queue = [6,13]
 		self.video_queue = [1003,1001]
 
 	def execute(self, userdata):
@@ -206,7 +206,7 @@ class AngryState(smach.State):
 			outcomes=['return_to_InAni'],
 			input_keys=['holding_in'],
 			output_keys=['status_out'])
-		self.motion_queue = [6,13,1,2,3,4,5,6]
+		self.motion_queue = [6,13]
 		self.video_queue = [1003,1001]
 
 	def execute(self, userdata):
@@ -246,7 +246,7 @@ class ConcernedState(smach.State):
 			outcomes=['return_to_InAni'],
 			input_keys=['holding_in'],
 			output_keys=['status_out'])
-		self.motion_queue = [6,13,1,2,3,4,5,6]
+		self.motion_queue = [6,13]
 		self.video_queue = [1003,1001]
 
 	def execute(self, userdata):
@@ -288,7 +288,7 @@ class DanceState(smach.State):
 			outcomes=['return_to_InAni'],
 			input_keys=['holding_in'],
 			output_keys=['status_out'])
-		self.motion_queue = [6,13,1,2,3,4,5,6]
+		self.motion_queue = [6,13]
 		self.video_queue = [1003,1001]
 
 	def execute(self, userdata):
