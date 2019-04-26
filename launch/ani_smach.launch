@@ -1,14 +1,14 @@
 <launch>
   <arg name="use_speech" value="true"/>
   <param name="use_speech" type="bool" value="$(arg use_speech)" />
-<!--
+
   <node name="animation_udp" pkg="animation" type="udp_comm" output="screen">
     <param name="rtc_ip"   type="str" value="10.10.10.3"/>
     <param name="nuc_ip"   type="str" value="10.10.10.100"/>
     <param name="rtc_port" type="str" value="25000"/>
     <param name="nuc_port" type="str" value="25001"/>
   </node>
--->
+
   <!--node name="ani_smach" pkg="animation" type="ani_smach.py" output="screen"/-->
   <node name="ani_smach" pkg="animation" type="ani_smach_with_alexa.py" output="screen"/>
   <group if="$(arg use_speech)">
