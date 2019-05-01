@@ -12,6 +12,7 @@ class BlueSender():
 		self.rec_vid = 0
 		self.prev_vid = 0
 		self.faddr = "24:4C:E3:63:1B:CA"
+		#self.faddr = "AC:0D:1B:76:C4:8D"
 		self.uuid = "94f39d29-7d6d-437d-973b-fba39e49d4ee"
 		self.Rate = rospy.Rate(1/3.0)
 		
@@ -120,6 +121,8 @@ class BlueSender():
 				if data == '0':
 					rospy.loginfo("feedback received, status ok")
 					status = 1
+				else:
+					rospy.loginfo("send again")
 
 			self.prev_vid = self.rec_vid
 			rospy.sleep(1/300.0)
