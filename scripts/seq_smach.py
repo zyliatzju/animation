@@ -16,9 +16,9 @@ class SeqSmach():
 		self.vid_pub = rospy.Publisher("animation_sm/bluetooth_vmsg", Int32, queue_size=1)
 
 		# self.motion_queue = [6,13]
-		self.motion_queue = [7,8,9]
+		self.motion_queue = [7]
 		# self.video_queue = [2001, 2002, 2003, 3001, 4001, 7001, 7002, 7003]
-		self.video_queue = [1005, 1006, 1007]
+		self.video_queue = [11001005]
 		self.trans_video = 1000 #video for transition 
 		self.midx = 0
 		self.vidx = 0
