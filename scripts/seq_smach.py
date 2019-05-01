@@ -19,7 +19,7 @@ class SeqSmach():
 		self.motion_queue = [7]
 		# self.video_queue = [2001, 2002, 2003, 3001, 4001, 7001, 7002, 7003]
 		self.video_queue = [11001005]
-		self.trans_video = 1000 #video for transition 
+		self.trans_video = 11001000 #video for transition 
 		self.midx = 0
 		self.vidx = 0
 		self.motion_msg = 0
