@@ -16,7 +16,7 @@ class Utils():
 		self.mid_pub = rospy.Publisher("animation_udp/motion_msg", Int32, queue_size=1)
 		self.vid_pub = rospy.Publisher("animation_sm/bluetooth_vmsg", Int32, queue_size=1)
 		rospy.Timer(rospy.Duration(1), self.plotting_callback)
-		self.video_trans = [1003, 1001, 1002, 1004] 
+		self.video_trans = [1000] 
 		self.speech_cmd_queue = ["lookaround"]
 		self.use_speech = rospy.get_param('use_speech',True)
 		self.rate = 1/300.0
@@ -83,8 +83,8 @@ class HappyState(smach.State):
 			outcomes=['return_to_InAni'],
 			input_keys=['holding_in'],
 			output_keys=['status_out'])
-		self.motion_queue = [6]
-		self.video_queue = [1003,1001]
+		self.motion_queue = [2]
+		self.video_queue = [2004]
 
 	def execute(self, userdata):
 		mid = random.randint(0,len(self.motion_queue)-1)
@@ -124,8 +124,8 @@ class SadState(smach.State):
 			outcomes=['return_to_InAni'],
 			input_keys=['holding_in'],
 			output_keys=['status_out'])
-		self.motion_queue = [6]
-		self.video_queue = [1003,1001]
+		self.motion_queue = [3]
+		self.video_queue = [1000]
 
 	def execute(self, userdata):
 		mid = random.randint(0,len(self.motion_queue)-1)
@@ -165,8 +165,8 @@ class LookaroundState(smach.State):
 			outcomes=['return_to_InAni'],
 			input_keys=['holding_in'],
 			output_keys=['status_out'])
-		self.motion_queue = [6]
-		self.video_queue = [1003,1001]
+		self.motion_queue = [1]
+		self.video_queue = [1000]
 
 	def execute(self, userdata):
 		mid = random.randint(0,len(self.motion_queue)-1)
@@ -206,8 +206,8 @@ class AngryState(smach.State):
 			outcomes=['return_to_InAni'],
 			input_keys=['holding_in'],
 			output_keys=['status_out'])
-		self.motion_queue = [6]
-		self.video_queue = [1003,1001]
+		self.motion_queue = [3]
+		self.video_queue = [1000]
 
 	def execute(self, userdata):
 		mid = random.randint(0,len(self.motion_queue)-1)
@@ -246,8 +246,8 @@ class ConcernedState(smach.State):
 			outcomes=['return_to_InAni'],
 			input_keys=['holding_in'],
 			output_keys=['status_out'])
-		self.motion_queue = [6]
-		self.video_queue = [1003,1001]
+		self.motion_queue = [3]
+		self.video_queue = [1000]
 
 	def execute(self, userdata):
 		mid = random.randint(0,len(self.motion_queue)-1)
@@ -288,8 +288,8 @@ class DanceState(smach.State):
 			outcomes=['return_to_InAni'],
 			input_keys=['holding_in'],
 			output_keys=['status_out'])
-		self.motion_queue = [6]
-		self.video_queue = [1003,1001]
+		self.motion_queue = [2]
+		self.video_queue = [2004]
 
 	def execute(self, userdata):
 		mid = random.randint(0,len(self.motion_queue)-1)
@@ -330,7 +330,7 @@ class InAniState(smach.State):
 			outcomes=['happy','concerned','angry','lookaround','sad','dance','end'],
 			input_keys=['status_in'],
 			output_keys=['holding_out','end_of_queue_out'])
-		self.ani_seq = ['lookaround','concerned','happy','lookaround']
+		self.ani_seq = ['lookaround','happy','sad','lookaround']
 		self.seq_id = 0
 
 	def execute(self, userdata):
